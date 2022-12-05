@@ -1,73 +1,146 @@
 <style scoped></style>
 
 <template>
-  <div>
-    <b-form>
-      <input type="text" placeholder="Número" v-model.number="address.number" />
-      <input type="text" placeholder="Complemento" v-model="address.complement" />
-      <input type="text" placeholder="Bairro" v-model="address.neighborhood" />
-      <input type="text" placeholder="Cidade" v-model="address.city" />
-      <input type="text" placeholder="Estado" v-model="address.state" />
-      <input
-        type="text"
-        placeholder="Ponto de referência"
-        v-model="address.referencePoint"
-      />
-      <input type="text" placeholder="Telefone celular" v-model="person.numberPhone" />
-      <div class="input-field col s6">
-        <input id="last_name" type="text" class="validate" />
-        <label for="last_name">Last Name</label>
-      </div>
-      <b-form-group id="cep" label="CEP:" label-for="cep">
-        <b-form-input
-          id="cep"
-          v-model="cep"
+  <div class="bg-info">
+    <form class="p-2">
+      <div class="form-floating mb-3">
+        <input
           type="text"
-          placeholder="Insira seu CEP"
-          required
-          @focusout="findAdress()"
-        ></b-form-input>
-      </b-form-group>
-
-      <b-form-group id="input-group-name" label="Nome:" label-for="name">
-        <b-form-input
-          id="name"
+          class="form-control"
+          v-model="cep"
+          id="cep"
+          placeholder="CEP"
+          @change="findAdress()"
+        />
+        <label for="cep">CEP</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="personName"
+          placeholder="Nome do destinatário"
           v-model="person.name"
-          placeholder="Nome completo"
-          required
-        ></b-form-input>
-      </b-form-group>
-
-      <input type="text" placeholder="Endereço" v-model="address.address" />
-
-      <b-form-group id="input-group-address" label="Endereço:" label-for="address">
-        <b-form-input
-          id="address"
+          @change="validarNome()"
+        />
+        <label for="personName">Nome do destinatário</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="addressAddress"
+          placeholder="Endereço"
           v-model="address.address"
-          required
-          outlined
-        ></b-form-input>
-      </b-form-group>
-    </b-form>
+          name="input"
+          @change="validarEndereco()"
+        />
+        <label for="addressAddress">Endereço</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="addressAddress"
+          placeholder="Número"
+          v-model="address.number"
+          @change="validarNumero()"
+        />
+        <label for="addressAddress">Número</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="addressComplement"
+          placeholder="Complemento"
+          v-model="address.complement"
+          @change=""
+        />
+        <label for="addressComplement">Complemento</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="addressNeighborhood"
+          placeholder="Bairro"
+          v-model="address.neighborhood"
+          name="input"
+        />
+        <label for="addressNeighborhood">Bairro</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="addressCity"
+          placeholder="Cidade"
+          v-model="address.city"
+          name="input"
+        />
+        <label for="addressCity">Cidade</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="addressState"
+          placeholder="Estado"
+          v-model="address.state"
+          name="input"
+        />
+        <label for="addressState">Estado</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="addressReference"
+          placeholder="Ponto de referência"
+          v-model="address.referencePoint"
+          name="input"
+        />
+        <label for="addressReference">Ponto de referência</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="tel"
+          class="form-control"
+          id="personNumber"
+          placeholder="Telefone celular"
+          v-model="person.numberPhone"
+        />
+        <label for="personNumber">Telefone celular</label>
+      </div>
+    </form>
   </div>
-  <div>{{ address.city }}</div>
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, readonly } from "vue";
 import apiConf from "@/api-conf.json";
 import axios from "axios";
 
+//pegar inputs com o nome input
+const inputs = document.getElementsByName("input");
+
+// url para acessar
 const baseURL = apiConf.baseURL;
+
+//referenciar o cep para alterações
 const cep = ref("");
+
+//objeto pessoa, para pegar nome e número
 const person = reactive({
   name: "",
-  numberPhone: 0,
+  numberPhone: "+55",
 });
 
+//objeto endereço
 const address = reactive({
   address: "",
-  number: 0,
+  number: "",
   complement: "",
   neighborhood: "",
   city: "",
@@ -75,6 +148,7 @@ const address = reactive({
   referencePoint: "",
 });
 
+//buscar endereço pelo axios
 const findAdress = () => {
   console.log(cep.value);
   axios
@@ -82,12 +156,150 @@ const findAdress = () => {
     .then((response) => {
       let obj = response.data;
       address.city = obj.localidade;
+      address.address = obj.logradouro;
       address.cep = obj.cep;
       address.neighborhood = obj.bairro;
       address.state = obj.uf;
+      setReeadOnly();
+      validarCEP();
     })
     .catch((error) => {
       console.log("Erro: " + JSON.stringify(error));
+      address.city = "";
+      address.address = "";
+      address.cep = "";
+      address.neighborhood = "";
+      address.state = "";
+      validarCEP();
     });
 };
+
+function setReeadOnly() {
+  for (let i = 0; i < inputs.length; i++) {
+    switch (i) {
+      case 0:
+        if (address.address != "") {
+          inputs[0].setAttribute("readonly", "readonly");
+        }
+        break;
+      case 1:
+        if (address.neighborhood != "") {
+          inputs[1].setAttribute("readonly", "readonly");
+        }
+        break;
+      case 2:
+        if (address.city != "") {
+          inputs[2].setAttribute("readonly", "readonly");
+        }
+        break;
+      case 3:
+        if (address.state != "") {
+          inputs[3].setAttribute("readonly", "readonly");
+        }
+        break;
+      default:
+        console.log("Erro setAttribute");
+    }
+  }
+}
+
+function validarCEP(){
+  if(address.cep == ""){
+    document.getElementById('cep').classList.remove("is-valid");  
+    document.getElementById('cep').classList.add("is-invalid");  
+  }else{
+    document.getElementById('cep').classList.remove("is-invalid");
+    document.getElementById('cep').classList.add("is-valid");
+  }
+}
+
+function validarNome(){
+  if(person.name == "" || person.name.length < 4 || person.name.trim().indexOf(' ') == -1){
+    document.getElementById('personName').classList.remove("is-valid");  
+    document.getElementById('personName').classList.add("is-invalid");  
+  }else{
+    document.getElementById('personName').classList.remove("is-invalid");
+    document.getElementById('personName').classList.add("is-valid");
+  }
+}
+
+function validarEndereco(){
+  if(address.address == "" || address.address.length < 5 || address.address.trim().indexOf(' ') == -1){
+    document.getElementById('addressAddress').classList.remove("is-valid");  
+    document.getElementById('addressAddress').classList.add("is-invalid");  
+  }else{
+    document.getElementById('addressAddress').classList.remove("is-invalid");
+    document.getElementById('addressAddress').classList.add("is-valid");
+  }
+}
+
+function validarNumero(){
+  if(address.cep == ""){
+    document.getElementById('cep').classList.remove("is-valid");  
+    document.getElementById('cep').classList.add("is-invalid");  
+  }else{
+    document.getElementById('cep').classList.remove("is-invalid");
+    document.getElementById('cep').classList.add("is-valid");
+  }
+}
+
+function validarComplemento(){
+  if(address.cep == ""){
+    document.getElementById('cep').classList.remove("is-valid");  
+    document.getElementById('cep').classList.add("is-invalid");  
+  }else{
+    document.getElementById('cep').classList.remove("is-invalid");
+    document.getElementById('cep').classList.add("is-valid");
+  }
+}
+
+function validarBairro(){
+  if(address.cep == ""){
+    document.getElementById('cep').classList.remove("is-valid");  
+    document.getElementById('cep').classList.add("is-invalid");  
+  }else{
+    document.getElementById('cep').classList.remove("is-invalid");
+    document.getElementById('cep').classList.add("is-valid");
+  }
+}
+
+function validarCidade(){
+  if(address.cep == ""){
+    document.getElementById('cep').classList.remove("is-valid");  
+    document.getElementById('cep').classList.add("is-invalid");  
+  }else{
+    document.getElementById('cep').classList.remove("is-invalid");
+    document.getElementById('cep').classList.add("is-valid");
+  }
+}
+
+function validarEstado(){
+  if(address.cep == ""){
+    document.getElementById('cep').classList.remove("is-valid");  
+    document.getElementById('cep').classList.add("is-invalid");  
+  }else{
+    document.getElementById('cep').classList.remove("is-invalid");
+    document.getElementById('cep').classList.add("is-valid");
+  }
+}
+
+function validarPonto(){
+  if(address.cep == ""){
+    document.getElementById('cep').classList.remove("is-valid");  
+    document.getElementById('cep').classList.add("is-invalid");  
+  }else{
+    document.getElementById('cep').classList.remove("is-invalid");
+    document.getElementById('cep').classList.add("is-valid");
+  }
+}
+
+function validarTelefone(){
+  if(address.cep == ""){
+    document.getElementById('cep').classList.remove("is-valid");  
+    document.getElementById('cep').classList.add("is-invalid");  
+  }else{
+    document.getElementById('cep').classList.remove("is-invalid");
+    document.getElementById('cep').classList.add("is-valid");
+  }
+}
 </script>

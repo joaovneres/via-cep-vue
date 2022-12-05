@@ -1,119 +1,124 @@
-<style scoped></style>
+<style scoped>
+.min-h-100 {
+  min-height: 100vh;
+}
+</style>
 
 <template>
-  <div>
-    <form class="p-2">
+  <body class="container-fluid bg-dark min-h-100">
+    <form class="p-4 row">
+    <h1 class="text-light display-4">Cadastrar endereço de entrega</h1>
       <div class="form-floating mb-3">
         <input
           type="text"
-          class="form-control"
+          class="form-control bg-light"
           v-model="cep"
           id="cep"
           placeholder="CEP"
           @change="findAdress()"
           required
         />
-        <label for="cep">CEP*</label>
+        <label for="cep" class="mx-2">CEP*</label>
       </div>
       <div class="form-floating mb-3">
         <input
           type="text"
-          class="form-control"
+          class="form-control bg-light"
           id="personName"
           placeholder="Nome do destinatário"
           v-model="person.name"
           @change="validarNome()"
         />
-        <label for="personName">Nome do destinatário*</label>
+        <label class="mx-2" for="personName">Nome do destinatário*</label>
       </div>
-      <div class="form-floating mb-3">
+      <div class="form-floating mb-3 col-sm-6">
         <input
           type="text"
-          class="form-control"
+          class="form-control bg-light"
           id="addressAddress"
           placeholder="Endereço"
           v-model="address.address"
           name="input"
           @change="validarEndereco()"
         />
-        <label for="addressAddress">Endereço*</label>
+        <label class="mx-2" for="addressAddress">Endereço*</label>
       </div>
-      <div class="form-floating mb-3">
+      <div class="form-floating mb-3 col-sm-3">
         <input
           type="text"
-          class="form-control"
+          class="form-control bg-light"
           id="addressNumber"
           placeholder="Número"
           v-model="address.number"
           @change="validarNumero()"
         />
-        <label for="addressNumber">Número*</label>
+        <label class="mx-2" for="addressNumber">Número*</label>
       </div>
-      <div class="form-floating mb-3">
+      <div class="form-floating mb-3 col-sm-3">
         <input
           type="text"
-          class="form-control"
+          class="form-control bg-light"
           id="addressComplement"
           placeholder="Complemento"
           v-model="address.complement"
         />
-        <label for="addressComplement">Complemento</label>
+        <label class="mx-2" for="addressComplement">Complemento</label>
       </div>
-      <div class="form-floating mb-3">
+      <div class="form-floating mb-3 col-sm-6">
         <input
           type="text"
-          class="form-control"
+          class="form-control bg-light"
           id="addressNeighborhood"
           placeholder="Bairro"
           v-model="address.neighborhood"
           name="input"
           @change="validarBairro()"
         />
-        <label for="addressNeighborhood">Bairro*</label>
+        <label class="mx-2" for="addressNeighborhood">Bairro*</label>
       </div>
-      <div class="form-floating mb-3">
+      <div class="form-floating mb-3 col-sm-3">
         <input
           type="text"
-          class="form-control"
+          class="form-control bg-light"
           id="addressCity"
           placeholder="Cidade"
           v-model="address.city"
           name="input"
         />
-        <label for="addressCity">Cidade*</label>
+        <label class="mx-2" for="addressCity">Cidade*</label>
       </div>
-      <div class="form-floating mb-3">
+      <div class="form-floating mb-3 col-sm-3">
         <input
           type="text"
-          class="form-control"
+          class="form-control bg-light"
           id="addressState"
           placeholder="Estado"
           v-model="address.state"
           name="input"
         />
-        <label for="addressState">Estado*</label>
+        <label class="mx-2" for="addressState">Estado*</label>
       </div>
       <div class="form-floating mb-3">
         <input
           type="text"
-          class="form-control"
+          class="form-control bg-light"
           id="addressReference"
           placeholder="Ponto de referência"
           v-model="address.referencePoint"
           name="input"
         />
-        <label for="addressReference">Ponto de referência</label>
+        <label class="mx-2" for="addressReference">Ponto de referência</label>
       </div>
       <div class="form-floating mb-3">
         <input
           type="tel"
-          class="form-control"
+          class="form-control bg-light"
           id="personNumber"
           placeholder="Telefone celular"
           v-model="person.numberPhone"
           @change="validarTelefone()"
         />
-        <label for="personNumber">Telefone celular*</label>
+        <label class="mx-2" for="personNumber">Telefone celular*</label>
       </div>
       <button type="button" class="btn btn-success" id="liveAlertBtn" @click="save()">
         Salvar
@@ -137,7 +142,7 @@
         aria-label="Close"
       ></button>
     </div>
-  </div>
+  </body>
 </template>
 
 <script setup>
@@ -191,6 +196,8 @@ const findAdress = () => {
       validarCEP();
       validarCidade();
       validarEstado();
+      validarBairro();
+      validarEndereco();
     })
     .catch((error) => {
       console.log("Erro: " + JSON.stringify(error));
@@ -202,6 +209,8 @@ const findAdress = () => {
       validarCEP();
       validarCidade();
       validarEstado();
+      validarBairro();
+      validarEndereco();
     });
 };
 
@@ -211,21 +220,29 @@ function setReeadOnly() {
       case 0:
         if (address.address != "") {
           inputs[0].setAttribute("readonly", "readonly");
+        }else{
+          inputs[0].removeAttribute("readonly", "readonly");
         }
         break;
       case 1:
         if (address.neighborhood != "") {
           inputs[1].setAttribute("readonly", "readonly");
+        }else{
+          inputs[1].removeAttribute("readonly", "readonly");
         }
         break;
       case 2:
         if (address.city != "") {
           inputs[2].setAttribute("readonly", "readonly");
+        }else{
+          inputs[2].removeAttribute("readonly", "readonly");
         }
         break;
       case 3:
         if (address.state != "") {
           inputs[3].setAttribute("readonly", "readonly");
+        }else{
+          inputs[3].removeAttribute("readonly", "readonly");
         }
         break;
       default:

@@ -3,8 +3,6 @@
 <template>
   <div>
     <b-form>
-
-      <input type="text" placeholder="Endereço" v-model="address.address" />
       <input type="text" placeholder="Número" v-model.number="address.number" />
       <input type="text" placeholder="Complemento" v-model="address.complement" />
       <input type="text" placeholder="Bairro" v-model="address.neighborhood" />
@@ -30,81 +28,27 @@
           @focusout="findAdress()"
         ></b-form-input>
       </b-form-group>
-      <input
-        type="text"
-        placeholder="Nome do Destinatário"
-        outlined
-        v-model="person.name"
-      />
-      <b-form-group id="input-group-name" label="Your Name:" label-for="name">
+
+      <b-form-group id="input-group-name" label="Nome:" label-for="name">
         <b-form-input
           id="name"
-          v-model="form.name"
-          placeholder="Insira seu nome"
+          v-model="person.name"
+          placeholder="Nome completo"
           required
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-3" label="Food:" label-for="input-3">
-        <b-form-select
-          id="input-3"
-          v-model="form.food"
-          :options="foods"
-          required
-        ></b-form-select>
-      </b-form-group>
-
-      <b-form-group id="input-group-4" v-slot="{ ariaDescribedby }">
-        <b-form-checkbox-group
-          v-model="form.checked"
-          id="checkboxes-4"
-          :aria-describedby="ariaDescribedby"
-        >
-          <b-form-checkbox value="me">Check me out</b-form-checkbox>
-          <b-form-checkbox value="that">Check that out</b-form-checkbox>
-        </b-form-checkbox-group>
-      </b-form-group>
-
-      <b-button type="submit" variant="primary">Submit</b-button>
-      <b-button type="reset" variant="danger">Reset</b-button>
-    </b-form>
-    <b-card class="mt-3" header="Form Data Result">
-      <pre class="m-0">{{ form }}</pre>
-    </b-card>
-  </div>
-  <div>
-    <form id="form-delivery">
-      <label for="cep"> CEP </label>
-      <b-form-input
-        type="text"
-        name="cep"
-        id="cep"
-        v-model="cep"
-        @focusout="findAdress()"
-      />
-      <input
-        type="text"
-        placeholder="Nome do Destinatário"
-        outlined
-        v-model="person.name"
-      />
       <input type="text" placeholder="Endereço" v-model="address.address" />
-      <input type="text" placeholder="Número" v-model.number="address.number" />
-      <input type="text" placeholder="Complemento" v-model="address.complement" />
-      <input type="text" placeholder="Bairro" v-model="address.neighborhood" />
-      <input type="text" placeholder="Cidade" v-model="address.city" />
-      <input type="text" placeholder="Estado" v-model="address.state" />
-      <input
-        type="text"
-        placeholder="Ponto de referência"
-        v-model="address.referencePoint"
-      />
-      <input type="text" placeholder="Telefone celular" v-model="person.numberPhone" />
-      <div class="input-field col s6">
-        <input id="last_name" type="text" class="validate" />
-        <label for="last_name">Last Name</label>
-      </div>
-    </form>
+
+      <b-form-group id="input-group-address" label="Endereço:" label-for="address">
+        <b-form-input
+          id="address"
+          v-model="address.address"
+          required
+          outlined
+        ></b-form-input>
+      </b-form-group>
+    </b-form>
   </div>
   <div>{{ address.city }}</div>
 </template>

@@ -4,7 +4,7 @@ Projeto desenvolvido para a matéria de Projeto de Navegação e Interação, mi
 
 ## Tecnologias
 
-VueJS, JavaScript.
+VueJS.
 
 ## Contato
 

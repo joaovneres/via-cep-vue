@@ -1,3 +1,15 @@
+## Projeto
+
+Projeto desenvolvido para a matéria de Projeto de Navegação e Interação, ministrada pelo professor mestre Jorge Luís Gregório.
+
+## Tecnologias
+
+VueJS, JavaScript.
+
+## Contato
+
+Email: victorsousa247@gmail.com
+
 # vue-via-cep
 
 This template should help get you started developing with Vue 3 in Vite.

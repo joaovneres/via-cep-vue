@@ -6,32 +6,54 @@
 
 <template>
   <body class="container-fluid bg-dark min-h-100">
-    <form class="p-4 row">
-    <h1 class="text-light display-4">Cadastrar endereço de entrega</h1>
-      <div class="form-floating mb-3">
-        <input
-          type="text"
-          class="form-control bg-light"
-          v-model="cep"
-          id="cep"
-          placeholder="CEP"
-          @change="findAdress()"
-          required
-        />
-        <label for="cep" class="mx-2">CEP*</label>
-      </div>
-      <div class="form-floating mb-3">
+    <form class="p-5 mx-5 row">
+      <h1 class="text-light display-4">Cadastro de usuário</h1>
+      <div class="form-floating mb-3 col-md-5">
         <input
           type="text"
           class="form-control bg-light"
           id="personName"
           placeholder="Nome do destinatário"
           v-model="person.name"
-          @change="validarNome()"
+          @input="validarNome()"
         />
         <label class="mx-2" for="personName">Nome do destinatário*</label>
       </div>
-      <div class="form-floating mb-3 col-sm-6">
+      <div class="form-floating mb-3 col-md-4">
+        <input
+          type="tel"
+          class="form-control bg-light"
+          id="personNumber"
+          placeholder="Telefone celular"
+          v-model="person.numberPhone"
+          @input="validarTelefone()"
+        />
+        <label class="mx-2" for="personNumber">Telefone celular*</label>
+      </div>
+      <div class="mb-3 col-md-3">
+        <label for="race-select" class="text-light">Escolha sua raça:</label>
+        <select
+          class="form-select bg-light"
+          id="race-select"
+          v-model="person.race"
+        >
+          <option v-for="race in races" :key="race">{{ race }}</option>
+        </select>
+      </div>
+      <div class="form-floating mb-3 col-md-3">
+        <input
+          mask="#####-###"
+          v-model="cep"
+          type="text"
+          class="form-control bg-light"
+          id="cep"
+          placeholder="CEP"
+          @blur="findAdress()"
+          required
+        />
+        <label for="cep" class="mx-2">CEP*</label>
+      </div>
+      <div class="form-floating mb-3 col-md-6">
         <input
           type="text"
           class="form-control bg-light"
@@ -39,7 +61,7 @@
           placeholder="Endereço"
           v-model="address.address"
           name="input"
-          @change="validarEndereco()"
+          @input="validarEndereco()"
         />
         <label class="mx-2" for="addressAddress">Endereço*</label>
       </div>
@@ -50,19 +72,9 @@
           id="addressNumber"
           placeholder="Número"
           v-model="address.number"
-          @change="validarNumero()"
+          @input="validarNumero()"
         />
         <label class="mx-2" for="addressNumber">Número*</label>
-      </div>
-      <div class="form-floating mb-3 col-sm-3">
-        <input
-          type="text"
-          class="form-control bg-light"
-          id="addressComplement"
-          placeholder="Complemento"
-          v-model="address.complement"
-        />
-        <label class="mx-2" for="addressComplement">Complemento</label>
       </div>
       <div class="form-floating mb-3 col-sm-6">
         <input
@@ -72,7 +84,7 @@
           placeholder="Bairro"
           v-model="address.neighborhood"
           name="input"
-          @change="validarBairro()"
+          @input="validarBairro()"
         />
         <label class="mx-2" for="addressNeighborhood">Bairro*</label>
       </div>
@@ -98,7 +110,17 @@
         />
         <label class="mx-2" for="addressState">Estado*</label>
       </div>
-      <div class="form-floating mb-3">
+      <div class="form-floating mb-3 col-md-4">
+        <input
+          type="text"
+          class="form-control bg-light"
+          id="addressComplement"
+          placeholder="Complemento"
+          v-model="address.complement"
+        />
+        <label class="mx-2" for="addressComplement">Complemento</label>
+      </div>
+      <div class="form-floating mb-3 col-md-8">
         <input
           type="text"
           class="form-control bg-light"
@@ -109,22 +131,22 @@
         />
         <label class="mx-2" for="addressReference">Ponto de referência</label>
       </div>
-      <div class="form-floating mb-3">
-        <input
-          type="tel"
-          class="form-control bg-light"
-          id="personNumber"
-          placeholder="Telefone celular"
-          v-model="person.numberPhone"
-          @change="validarTelefone()"
-        />
-        <label class="mx-2" for="personNumber">Telefone celular*</label>
+      <div class="d-grid gap-2 col-4 mx-auto mt-5">
+        <button
+          type="button"
+          class="btn btn-success"
+          id="liveAlertBtn"
+          @click="save()"
+        >
+          Salvar
+        </button>
       </div>
-      <button type="button" class="btn btn-success" id="liveAlertBtn" @click="save()">
-        Salvar
-      </button>
     </form>
-    <div class="alert alert-success alert-dismissible d-none" role="alert" id="success">
+    <div
+      class="alert alert-success alert-dismissible d-none"
+      role="alert"
+      id="success"
+    >
       <div>Cadastrado com sucesso!</div>
       <button
         type="button"
@@ -133,7 +155,11 @@
         aria-label="Close"
       ></button>
     </div>
-    <div class="alert alert-danger alert-dismissible d-none" role="alert" id="fail">
+    <div
+      class="alert alert-danger alert-dismissible d-none"
+      role="alert"
+      id="fail"
+    >
       <div>Erro ao cadastrar</div>
       <button
         type="button"
@@ -166,6 +192,7 @@ let validation = false;
 const person = reactive({
   name: "",
   numberPhone: "+55",
+  race: "",
 });
 
 //objeto endereço
@@ -180,6 +207,22 @@ const address = reactive({
   cep: "",
 });
 
+const maskCEP = (value) => {
+  console.log("Entrou");
+  if (value.length <= 9) {
+    console.log(true);
+    console.log(
+      value.replace(/\D/g, "").replace(/^(\d{5})(\d{3})+?$/, "$1-$2")
+    );
+    return (cep.value = value
+      .replace(/\D/g, "")
+      .replace(/^(\d{5})(\d{3})+?$/, "$1-$2"));
+  }
+  return cep.value;
+};
+
+const races = ["Branca", "Preta", "Amarela", "Parda", "Indígena"];
+
 //buscar endereço pelo axios
 const findAdress = () => {
   console.log(cep.value);
@@ -189,7 +232,7 @@ const findAdress = () => {
       let obj = response.data;
       address.city = obj.localidade;
       address.address = obj.logradouro;
-      address.cep = obj.cep;
+      address.cep = maskCEP(obj.cep);
       address.neighborhood = obj.bairro;
       address.state = obj.uf;
       setReeadOnly();
@@ -220,28 +263,28 @@ function setReeadOnly() {
       case 0:
         if (address.address != "") {
           inputs[0].setAttribute("readonly", "readonly");
-        }else{
+        } else {
           inputs[0].removeAttribute("readonly", "readonly");
         }
         break;
       case 1:
         if (address.neighborhood != "") {
           inputs[1].setAttribute("readonly", "readonly");
-        }else{
+        } else {
           inputs[1].removeAttribute("readonly", "readonly");
         }
         break;
       case 2:
         if (address.city != "") {
           inputs[2].setAttribute("readonly", "readonly");
-        }else{
+        } else {
           inputs[2].removeAttribute("readonly", "readonly");
         }
         break;
       case 3:
         if (address.state != "") {
           inputs[3].setAttribute("readonly", "readonly");
-        }else{
+        } else {
           inputs[3].removeAttribute("readonly", "readonly");
         }
         break;
@@ -313,7 +356,9 @@ function validarBairro() {
     document.getElementById("addressNeighborhood").classList.add("is-invalid");
     return false;
   } else {
-    document.getElementById("addressNeighborhood").classList.remove("is-invalid");
+    document
+      .getElementById("addressNeighborhood")
+      .classList.remove("is-invalid");
     document.getElementById("addressNeighborhood").classList.add("is-valid");
     return true;
   }
